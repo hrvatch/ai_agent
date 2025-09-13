@@ -224,13 +224,17 @@ def llm_give_prompt_generate_response(options):
     loop_cnt = 0
     while (loop_cnt < 20):
         loop_cnt += 1
-        response = client.models.generate_content(
-            model=MODEL,
-            contents=messages,
-            config=types.GenerateContentConfig(
-                tools=[available_functions], system_instruction=system_prompt
+        try:
+            response = client.models.generate_content(
+                model=MODEL,
+                contents=messages,
+                config=types.GenerateContentConfig(
+                    tools=[available_functions], system_instruction=system_prompt
+                )
             )
-        )
+        except Exception as err:
+            print(f"Error: {err}")
+            sys.exit(1)
 
         for candidate in response.candidates:
             messages.append(candidate.content)
